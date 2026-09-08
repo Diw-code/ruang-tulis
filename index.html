@@ -1,1102 +1,1792 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>RuangTulis — Temukan Cerita, Bagikan Pemikiran</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <title>RuangTulis — Temukan Cerita, Bagikan Pemikiran</title>
 
-<style>
-* {
-    box-sizing: border-box;
-    margin: 0;
-    padding: 0;
-}
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-body {
-    font-family: Arial, Helvetica, sans-serif;
-    background: #f7f8fc;
-    color: #20232a;
-}
-
-button, input {
-    font: inherit;
-}
-
-button {
-    cursor: pointer;
-}
-
-.app {
-    min-height: 100vh;
-}
-
-/* HEADER */
-header {
-    height: 70px;
-    background: white;
-    border-bottom: 1px solid #e8eaf0;
-    display: flex;
-    align-items: center;
-    padding: 0 30px;
-    gap: 30px;
-    position: sticky;
-    top: 0;
-    z-index: 50;
-}
-
-.logo {
-    font-size: 22px;
-    font-weight: 800;
-    color: #5367d9;
-    min-width: 180px;
-}
-
-.search {
-    flex: 1;
-    max-width: 600px;
-    background: #f3f4f8;
-    border-radius: 30px;
-    padding: 12px 20px;
-    border: none;
-    outline: none;
-}
-
-.header-right {
-    margin-left: auto;
-    display: flex;
-    align-items: center;
-    gap: 15px;
-}
-
-.user-mini {
-    display: none;
-    align-items: center;
-    gap: 9px;
-    font-size: 14px;
-    font-weight: 600;
-}
-
-.avatar {
-    width: 38px;
-    height: 38px;
-    border-radius: 50%;
-    background: linear-gradient(135deg, #667eea, #9b7bea);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: white;
-    font-weight: bold;
-}
-
-/* LAYOUT */
-.layout {
-    max-width: 1400px;
-    margin: auto;
-    display: grid;
-    grid-template-columns: 210px minmax(0, 1fr) 290px;
-    gap: 25px;
-    padding: 25px;
-}
-
-/* SIDEBAR */
-.sidebar {
-    position: sticky;
-    top: 95px;
-    height: fit-content;
-}
-
-.nav {
-    background: white;
-    border-radius: 18px;
-    padding: 12px;
-    border: 1px solid #e8eaf0;
-}
-
-.nav button {
-    width: 100%;
-    border: none;
-    background: transparent;
-    text-align: left;
-    padding: 13px 15px;
-    border-radius: 12px;
-    color: #5c6270;
-    margin-bottom: 3px;
-}
-
-.nav button:hover,
-.nav button.active {
-    background: #eef0ff;
-    color: #5367d9;
-    font-weight: 700;
-}
-
-.quote {
-    margin-top: 18px;
-    background: linear-gradient(135deg, #eef0ff, #f7efff);
-    border-radius: 18px;
-    padding: 20px;
-    color: #666b78;
-    font-size: 13px;
-    line-height: 1.7;
-}
-
-/* MAIN */
-.hero {
-    min-height: 270px;
-    border-radius: 22px;
-    padding: 38px;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    color: white;
-    background:
-        linear-gradient(135deg, rgba(74,84,170,.85), rgba(128,91,173,.65)),
-        linear-gradient(120deg, #6c7be0, #a47bc2);
-    box-shadow: 0 15px 40px rgba(74,84,170,.15);
-}
-
-.hero h1 {
-    font-size: 34px;
-    line-height: 1.2;
-    max-width: 620px;
-}
-
-.hero p {
-    margin-top: 14px;
-    opacity: .9;
-    font-size: 15px;
-}
-
-.composer {
-    background: white;
-    border: 1px solid #e8eaf0;
-    border-radius: 18px;
-    padding: 18px;
-    margin-top: 20px;
-}
-
-.composer-top {
-    display: flex;
-    gap: 12px;
-}
-
-.composer-input {
-    flex: 1;
-    background: #f5f6fa;
-    border-radius: 14px;
-    border: none;
-    padding: 15px;
-    outline: none;
-}
-
-.write-btn,
-.login-btn {
-    border: none;
-    background: #596bdc;
-    color: white;
-    border-radius: 12px;
-    padding: 12px 20px;
-    font-weight: 700;
-}
-
-.tabs {
-    display: flex;
-    gap: 25px;
-    padding: 25px 5px 12px;
-}
-
-.tabs button {
-    border: none;
-    background: transparent;
-    color: #777c88;
-    padding-bottom: 9px;
-}
-
-.tabs button.active {
-    color: #5367d9;
-    border-bottom: 2px solid #5367d9;
-    font-weight: bold;
-}
-
-/* POST */
-.post {
-    background: white;
-    border: 1px solid #e8eaf0;
-    border-radius: 18px;
-    padding: 22px;
-    margin-bottom: 18px;
-}
-
-.post-head {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-}
-
-.post-author {
-    font-weight: 700;
-}
-
-.post-handle {
-    color: #8a8f9b;
-    font-size: 13px;
-}
-
-.post h2 {
-    margin-top: 18px;
-    font-size: 22px;
-}
-
-.post p {
-    margin-top: 10px;
-    color: #656b77;
-    line-height: 1.7;
-}
-
-.tag {
-    display: inline-block;
-    margin-top: 15px;
-    padding: 7px 11px;
-    border-radius: 20px;
-    background: #eef0ff;
-    color: #596bdc;
-    font-size: 12px;
-}
-
-.actions {
-    display: flex;
-    gap: 20px;
-    margin-top: 18px;
-    color: #777c88;
-}
-
-.actions button {
-    background: none;
-    border: none;
-    color: inherit;
-}
-
-/* RIGHT */
-.right-panel {
-    position: sticky;
-    top: 95px;
-    height: fit-content;
-}
-
-.panel {
-    background: white;
-    border: 1px solid #e8eaf0;
-    border-radius: 18px;
-    padding: 20px;
-    margin-bottom: 18px;
-}
-
-.panel h3 {
-    margin-bottom: 18px;
-}
-
-.popular {
-    display: flex;
-    gap: 12px;
-    margin-bottom: 17px;
-}
-
-.number {
-    font-weight: 800;
-    color: #a3a7b2;
-}
-
-.popular-title {
-    font-size: 14px;
-    font-weight: 700;
-}
-
-.popular-small {
-    color: #999eaa;
-    font-size: 12px;
-    margin-top: 4px;
-}
-
-/* AUTH */
-.overlay {
-    position: fixed;
-    inset: 0;
-    background: rgba(18,20,28,.55);
-    display: none;
-    align-items: center;
-    justify-content: center;
-    padding: 20px;
-    z-index: 100;
-}
-
-.auth-box {
-    width: 100%;
-    max-width: 430px;
-    background: white;
-    border-radius: 22px;
-    padding: 30px;
-    box-shadow: 0 25px 70px rgba(0,0,0,.2);
-}
-
-.auth-box h2 {
-    font-size: 26px;
-    margin-bottom: 8px;
-}
-
-.auth-subtitle {
-    color: #777c88;
-    margin-bottom: 25px;
-    font-size: 14px;
-}
-
-.auth-box input {
-    width: 100%;
-    padding: 14px;
-    border: 1px solid #dddfe7;
-    border-radius: 12px;
-    outline: none;
-    margin-bottom: 12px;
-}
-
-.auth-box input:focus {
-    border-color: #596bdc;
-}
-
-.auth-submit {
-    width: 100%;
-    padding: 14px;
-    border: none;
-    border-radius: 12px;
-    background: #596bdc;
-    color: white;
-    font-weight: 700;
-    margin-top: 5px;
-}
-
-.close-auth {
-    float: right;
-    border: none;
-    background: none;
-    font-size: 22px;
-    color: #777;
-}
-
-.switch-auth {
-    margin-top: 18px;
-    text-align: center;
-    font-size: 14px;
-    color: #777;
-}
-
-.switch-auth button {
-    border: none;
-    background: none;
-    color: #596bdc;
-    font-weight: bold;
-}
-
-.message {
-    margin-top: 15px;
-    padding: 11px;
-    border-radius: 10px;
-    display: none;
-    font-size: 13px;
-}
-
-.message.show {
-    display: block;
-}
-
-.logout-btn {
-    display: none;
-    border: 1px solid #dddfe7;
-    background: white;
-    color: #555;
-    border-radius: 10px;
-    padding: 9px 13px;
-}
-
-/* MOBILE */
-@media (max-width: 1000px) {
-    .layout {
-        grid-template-columns: 180px minmax(0, 1fr);
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
     }
 
-    .right-panel {
-        display: none;
+    body {
+      font-family: Arial, Helvetica, sans-serif;
+      background: #f6f7fb;
+      color: #252735;
     }
-}
 
-@media (max-width: 700px) {
+    button,
+    input,
+    textarea,
+    select {
+      font: inherit;
+    }
+
+    button {
+      cursor: pointer;
+    }
+
+    .app {
+      min-height: 100vh;
+    }
+
+    /* HEADER */
+
     header {
-        padding: 0 15px;
+      height: 72px;
+      background: white;
+      border-bottom: 1px solid #e7e8ef;
+      display: flex;
+      align-items: center;
+      padding: 0 32px;
+      gap: 30px;
+      position: sticky;
+      top: 0;
+      z-index: 20;
     }
 
     .logo {
-        min-width: auto;
+      font-size: 23px;
+      font-weight: 800;
+      color: #4657d9;
+      white-space: nowrap;
+    }
+
+    .logo span {
+      color: #262837;
     }
 
     .search {
-        display: none;
+      flex: 1;
+      max-width: 600px;
+      margin: auto;
     }
+
+    .search input {
+      width: 100%;
+      border: 0;
+      outline: none;
+      background: #f2f3f7;
+      border-radius: 30px;
+      padding: 14px 20px;
+      font-size: 14px;
+    }
+
+    .header-user {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #5868df, #8b72e9);
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+    }
+
+    .login-btn {
+      border: 0;
+      background: #5868df;
+      color: white;
+      border-radius: 10px;
+      padding: 11px 18px;
+      font-weight: 700;
+    }
+
+    .logout-btn {
+      border: 1px solid #dddfea;
+      background: white;
+      border-radius: 10px;
+      padding: 9px 13px;
+    }
+
+    /* LAYOUT */
 
     .layout {
-        display: block;
-        padding: 15px;
+      max-width: 1400px;
+      margin: auto;
+      display: grid;
+      grid-template-columns: 220px minmax(400px, 1fr) 280px;
+      gap: 25px;
+      padding: 25px;
     }
+
+    /* SIDEBAR */
 
     .sidebar {
-        position: static;
-        margin-bottom: 15px;
+      position: sticky;
+      top: 95px;
+      height: max-content;
     }
 
-    .nav {
-        display: flex;
-        overflow-x: auto;
+    .nav-card {
+      background: white;
+      border: 1px solid #e6e7ef;
+      border-radius: 18px;
+      padding: 12px;
     }
 
-    .nav button {
-        white-space: nowrap;
+    .nav-item {
+      width: 100%;
+      padding: 13px;
+      border: 0;
+      background: transparent;
+      text-align: left;
+      border-radius: 12px;
+      margin-bottom: 5px;
+      color: #55586a;
+    }
+
+    .nav-item:hover,
+    .nav-item.active {
+      background: #eef0ff;
+      color: #4e5ed8;
+      font-weight: 700;
     }
 
     .quote {
-        display: none;
+      background: white;
+      border: 1px solid #e6e7ef;
+      border-radius: 18px;
+      padding: 20px;
+      margin-top: 18px;
+      color: #777b8c;
+      line-height: 1.6;
+      font-size: 13px;
     }
 
+    /* MAIN */
+
     .hero {
-        padding: 25px;
-        min-height: 230px;
+      min-height: 270px;
+      border-radius: 22px;
+      padding: 35px;
+      color: white;
+      background:
+        linear-gradient(135deg, rgba(63,75,180,.92), rgba(127,94,196,.88)),
+        linear-gradient(135deg, #5969db, #8769d8);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      margin-bottom: 20px;
     }
 
     .hero h1 {
-        font-size: 27px;
+      font-size: 34px;
+      line-height: 1.15;
+      max-width: 620px;
+      margin-bottom: 14px;
     }
 
-    .composer-top {
-        flex-direction: column;
+    .hero p {
+      opacity: .9;
+      max-width: 580px;
+      line-height: 1.6;
+    }
+
+    .composer {
+      background: white;
+      border: 1px solid #e6e7ef;
+      border-radius: 18px;
+      padding: 20px;
+      margin-bottom: 20px;
+    }
+
+    .composer textarea {
+      width: 100%;
+      min-height: 90px;
+      border: 0;
+      resize: none;
+      outline: none;
+      font-size: 15px;
+    }
+
+    .composer-bottom {
+      display: flex;
+      justify-content: flex-end;
+      border-top: 1px solid #eeeef3;
+      padding-top: 15px;
     }
 
     .write-btn {
-        width: 100%;
+      border: 0;
+      border-radius: 10px;
+      background: #5868df;
+      color: white;
+      padding: 11px 20px;
+      font-weight: bold;
     }
-}
-</style>
+
+    .post {
+      background: white;
+      border: 1px solid #e6e7ef;
+      border-radius: 18px;
+      padding: 22px;
+      margin-bottom: 18px;
+    }
+
+    .post-author {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 15px;
+    }
+
+    .post-author small {
+      color: #858898;
+    }
+
+    .post h2 {
+      font-size: 21px;
+      margin-bottom: 10px;
+    }
+
+    .post p {
+      color: #676a79;
+      line-height: 1.7;
+    }
+
+    .post-actions {
+      display: flex;
+      gap: 20px;
+      margin-top: 18px;
+      color: #777a89;
+      font-size: 14px;
+    }
+
+    /* RIGHT */
+
+    .right-panel {
+      background: white;
+      border: 1px solid #e6e7ef;
+      border-radius: 18px;
+      padding: 20px;
+      height: max-content;
+    }
+
+    .right-panel h3 {
+      margin-bottom: 18px;
+    }
+
+    .popular {
+      padding: 12px 0;
+      border-bottom: 1px solid #eeeef3;
+    }
+
+    .popular:last-child {
+      border-bottom: 0;
+    }
+
+    .popular strong {
+      display: block;
+      margin-bottom: 5px;
+    }
+
+    .popular small {
+      color: #888b99;
+    }
+
+    /* MODAL */
+
+    .modal-bg {
+      position: fixed;
+      inset: 0;
+      background: rgba(20, 22, 35, .55);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      z-index: 100;
+    }
+
+    .modal-bg.show {
+      display: flex;
+    }
+
+    .modal {
+      background: white;
+      width: 100%;
+      max-width: 480px;
+      max-height: 90vh;
+      overflow-y: auto;
+      border-radius: 22px;
+      padding: 28px;
+      position: relative;
+    }
+
+    .close {
+      position: absolute;
+      right: 20px;
+      top: 18px;
+      border: 0;
+      background: transparent;
+      font-size: 24px;
+      color: #777;
+    }
+
+    .modal h2 {
+      font-size: 25px;
+      margin-bottom: 7px;
+    }
+
+    .modal-subtitle {
+      color: #888b99;
+      font-size: 14px;
+      margin-bottom: 20px;
+    }
+
+    .auth-tabs {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 6px;
+      background: #f2f3f7;
+      border-radius: 12px;
+      padding: 5px;
+      margin-bottom: 18px;
+    }
+
+    .auth-tab {
+      border: 0;
+      background: transparent;
+      border-radius: 9px;
+      padding: 10px 5px;
+      font-size: 12px;
+    }
+
+    .auth-tab.active {
+      background: white;
+      color: #4f5fd7;
+      font-weight: bold;
+      box-shadow: 0 2px 8px rgba(0,0,0,.05);
+    }
+
+    .field {
+      margin-bottom: 13px;
+    }
+
+    .field label {
+      display: block;
+      font-size: 13px;
+      font-weight: bold;
+      margin-bottom: 6px;
+    }
+
+    .field input,
+    .field textarea {
+      width: 100%;
+      border: 1px solid #dfe1ea;
+      border-radius: 11px;
+      padding: 13px;
+      outline: none;
+    }
+
+    .field input:focus,
+    .field textarea:focus {
+      border-color: #5868df;
+    }
+
+    .field textarea {
+      min-height: 80px;
+      resize: vertical;
+    }
+
+    .password-note {
+      color: #8b8e9b;
+      font-size: 11px;
+      margin-top: 5px;
+    }
+
+    .primary {
+      width: 100%;
+      border: 0;
+      border-radius: 11px;
+      padding: 13px;
+      background: #5868df;
+      color: white;
+      font-weight: bold;
+      margin-top: 5px;
+    }
+
+    .secondary {
+      width: 100%;
+      border: 1px solid #dfe1ea;
+      border-radius: 11px;
+      padding: 12px;
+      background: white;
+      margin-top: 10px;
+    }
+
+    .message {
+      display: none;
+      padding: 11px 13px;
+      border-radius: 10px;
+      margin-top: 12px;
+      font-size: 13px;
+      line-height: 1.5;
+    }
+
+    .message.show {
+      display: block;
+    }
+
+    .message.error {
+      background: #fff0f0;
+      color: #b32929;
+    }
+
+    .message.success {
+      background: #edf9f1;
+      color: #28743f;
+    }
+
+    .switch {
+      text-align: center;
+      margin-top: 18px;
+      font-size: 13px;
+      color: #777b89;
+    }
+
+    .switch button {
+      border: 0;
+      background: transparent;
+      color: #5262da;
+      font-weight: bold;
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    .profile-box {
+      display: none;
+      margin-top: 20px;
+      padding: 15px;
+      background: #f6f7ff;
+      border-radius: 14px;
+    }
+
+    @media(max-width: 1050px) {
+      .layout {
+        grid-template-columns: 190px 1fr;
+      }
+
+      .right-panel {
+        display: none;
+      }
+    }
+
+    @media(max-width: 720px) {
+      header {
+        padding: 0 15px;
+      }
+
+      .search {
+        display: none;
+      }
+
+      .layout {
+        display: block;
+        padding: 15px;
+      }
+
+      .sidebar {
+        position: static;
+        margin-bottom: 18px;
+      }
+
+      .nav-card {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+      }
+
+      .quote {
+        display: none;
+      }
+
+      .hero h1 {
+        font-size: 27px;
+      }
+    }
+  </style>
 </head>
 
 <body>
 
 <div class="app">
 
-<header>
-    <div class="logo">✦ RuangTulis</div>
+  <header>
+    <div class="logo">✦ Ruang<span>Tulis</span></div>
 
-    <input
-        class="search"
-        id="searchInput"
+    <div class="search">
+      <input
+        type="text"
         placeholder="Cari tulisan, penulis, atau topik..."
-    >
-
-    <div class="header-right">
-        <button class="login-btn" id="openLogin">Masuk</button>
-        <button class="logout-btn" id="logoutBtn">Keluar</button>
-
-        <div class="user-mini" id="userMini">
-            <div class="avatar" id="userAvatar">R</div>
-            <span id="userName">Pengguna</span>
-        </div>
+      >
     </div>
-</header>
 
-<div class="layout">
+    <div class="header-user" id="headerUser">
+      <button class="login-btn" id="openLogin">Masuk</button>
+    </div>
+  </header>
+
+  <div class="layout">
 
     <aside class="sidebar">
-        <div class="nav">
-            <button class="active">⌂ &nbsp; Beranda</button>
-            <button>◉ &nbsp; Jelajahi</button>
-            <button id="navWrite">✎ &nbsp; Tulis</button>
-            <button>♡ &nbsp; Notifikasi</button>
-            <button>✉ &nbsp; Pesan</button>
-            <button>◎ &nbsp; Profil</button>
-        </div>
 
-        <div class="quote">
-            “Setiap tulisan adalah langkah kecil menuju dunia yang lebih baik.”
-        </div>
+      <div class="nav-card">
+        <button class="nav-item active">⌂ &nbsp; Beranda</button>
+        <button class="nav-item">◉ &nbsp; Jelajahi</button>
+        <button class="nav-item" id="navWrite">✎ &nbsp; Tulis</button>
+        <button class="nav-item">♡ &nbsp; Notifikasi</button>
+        <button class="nav-item">✉ &nbsp; Pesan</button>
+        <button class="nav-item" id="navProfile">◎ &nbsp; Profil</button>
+      </div>
+
+      <div class="quote">
+        "Setiap tulisan adalah langkah kecil menuju dunia yang lebih baik."
+      </div>
+
     </aside>
 
     <main>
 
-        <section class="hero">
-            <h1>
-                Temukan cerita,<br>
-                bagikan pemikiran,<br>
-                dan temukan dirimu di sini.
-            </h1>
+      <section class="hero">
+        <h1>
+          Temukan cerita,<br>
+          bagikan pemikiran,<br>
+          dan temukan dirimu di sini.
+        </h1>
 
-            <p>
-                Ruang untuk semua penulis, pembaca, dan pencinta kata.
-            </p>
-        </section>
+        <p>
+          Ruang untuk semua penulis, pembaca, dan pencinta kata.
+        </p>
+      </section>
 
-        <section class="composer">
-            <div class="composer-top">
-                <div class="avatar">R</div>
+      <section class="composer">
 
-                <input
-                    class="composer-input"
-                    id="composerInput"
-                    placeholder="Apa yang ingin kamu tulis hari ini?"
-                >
+        <textarea
+          id="composerText"
+          placeholder="Apa yang ingin kamu tulis hari ini?"
+        ></textarea>
 
-                <button class="write-btn" id="writeButton">
-                    Tulis
-                </button>
-            </div>
-        </section>
-
-        <div class="tabs">
-            <button class="active">Untukmu</button>
-            <button>Terbaru</button>
-            <button>Populer</button>
-            <button>Mengikuti</button>
+        <div class="composer-bottom">
+          <button class="write-btn" id="writeButton">
+            Tulis
+          </button>
         </div>
 
-        <article class="post">
-            <div class="post-head">
-                <div class="avatar">N</div>
-                <div>
-                    <div class="post-author">Nadia Aulia</div>
-                    <div class="post-handle">@nadiaaulia · 2 jam yang lalu</div>
-                </div>
-            </div>
+      </section>
 
-            <h2>Langit yang Sama, Cerita yang Berbeda</h2>
+      <article class="post">
 
-            <p>
-                Ada kalanya kita merasa hidup hanya tentang rutinitas,
-                bangun, bekerja, pulang, tidur. Namun, di balik semua itu,
-                selalu ada sesuatu yang menunggu untuk diceritakan.
-                Seperti langit yang sama, tapi setiap orang melihatnya
-                dengan cerita yang berbeda...
-            </p>
+        <div class="post-author">
+          <div class="avatar">N</div>
+          <div>
+            <strong>Nadia Aulia</strong><br>
+            <small>@nadiaaulia · 2 jam yang lalu</small>
+          </div>
+        </div>
 
-            <span class="tag">Cerita Kehidupan</span>
+        <h2>Langit yang Sama, Cerita yang Berbeda</h2>
 
-            <div class="actions">
-                <button>♡ 124</button>
-                <button>💬 18</button>
-                <button>🔖</button>
-                <button>↗</button>
-            </div>
-        </article>
+        <p>
+          Ada kalanya kita merasa hidup hanya tentang rutinitas,
+          bangun, bekerja, pulang, tidur. Namun di balik semua itu,
+          selalu ada sesuatu yang menunggu untuk diceritakan.
+        </p>
 
-        <article class="post">
-            <div class="post-head">
-                <div class="avatar">R</div>
-                <div>
-                    <div class="post-author">Raka Pratama</div>
-                    <div class="post-handle">@rakapratama · 5 jam yang lalu</div>
-                </div>
-            </div>
+        <div class="post-actions">
+          <span>♡ 124</span>
+          <span>▢ 18</span>
+          <span>🔖</span>
+          <span>↗</span>
+        </div>
 
-            <h2>Tentang Kamu, yang Masih Berjuang</h2>
+      </article>
 
-            <p>
-                Kamu mungkin merasa lelah. Merasa tidak cukup baik.
-                Merasa tertinggal. Tapi percayalah, kamu sudah melakukan
-                yang terbaik dengan caramu sendiri. Dan itu sudah cukup...
-            </p>
+      <article class="post">
 
-            <span class="tag">Motivasi</span>
+        <div class="post-author">
+          <div class="avatar">R</div>
+          <div>
+            <strong>Raka Pratama</strong><br>
+            <small>@rakapratama · 5 jam yang lalu</small>
+          </div>
+        </div>
 
-            <div class="actions">
-                <button>♡ 203</button>
-                <button>💬 27</button>
-                <button>🔖</button>
-                <button>↗</button>
-            </div>
-        </article>
+        <h2>Tentang Kamu, yang Masih Berjuang</h2>
+
+        <p>
+          Kamu mungkin merasa lelah. Merasa tidak cukup baik.
+          Merasa tertinggal. Tapi percayalah, kamu sudah melakukan
+          yang terbaik dengan caramu sendiri.
+        </p>
+
+        <div class="post-actions">
+          <span>♡ 203</span>
+          <span>▢ 27</span>
+          <span>🔖</span>
+          <span>↗</span>
+        </div>
+
+      </article>
 
     </main>
 
-    <aside class="right-panel">
+    <aside>
 
-        <div class="panel">
-            <h3>🔥 Tulisan Populer</h3>
+      <div class="right-panel">
 
-            <div class="popular">
-                <div class="number">1</div>
-                <div>
-                    <div class="popular-title">Hujan, Kopi, dan Kamu</div>
-                    <div class="popular-small">Raka Pratama · 12.4k dibaca</div>
-                </div>
-            </div>
+        <h3>🔥 Tulisan Populer</h3>
 
-            <div class="popular">
-                <div class="number">2</div>
-                <div>
-                    <div class="popular-title">Langit yang Sama</div>
-                    <div class="popular-small">Nadia Aulia · 10.8k dibaca</div>
-                </div>
-            </div>
-
-            <div class="popular">
-                <div class="number">3</div>
-                <div>
-                    <div class="popular-title">Tentang Rumah</div>
-                    <div class="popular-small">Damar Aditya · 9.7k dibaca</div>
-                </div>
-            </div>
-
-            <div class="popular">
-                <div class="number">4</div>
-                <div>
-                    <div class="popular-title">Pelajaran dari Kehilangan</div>
-                    <div class="popular-small">Salsa Putri · 8.9k dibaca</div>
-                </div>
-            </div>
+        <div class="popular">
+          <strong>Hujan, Kopi, dan Kamu</strong>
+          <small>Raka Pratama · 12.4k dibaca</small>
         </div>
 
-        <div class="panel">
-            <h3>✦ Penulis Pilihan</h3>
-
-            <div class="popular">
-                <div class="avatar">N</div>
-                <div>
-                    <div class="popular-title">Nadia Aulia</div>
-                    <div class="popular-small">@nadiaaulia</div>
-                </div>
-            </div>
-
-            <div class="popular">
-                <div class="avatar">R</div>
-                <div>
-                    <div class="popular-title">Raka Pratama</div>
-                    <div class="popular-small">@rakapratama</div>
-                </div>
-            </div>
-
-            <div class="popular">
-                <div class="avatar">S</div>
-                <div>
-                    <div class="popular-title">Salsa Putri</div>
-                    <div class="popular-small">@salsaputri</div>
-                </div>
-            </div>
+        <div class="popular">
+          <strong>Langit yang Sama</strong>
+          <small>Nadia Aulia · 10.8k dibaca</small>
         </div>
+
+        <div class="popular">
+          <strong>Tentang Rumah</strong>
+          <small>Damar Aditya · 9.7k dibaca</small>
+        </div>
+
+        <div class="popular">
+          <strong>Pelajaran dari Kehilangan</strong>
+          <small>Salsa Putri · 8.9k dibaca</small>
+        </div>
+
+      </div>
 
     </aside>
 
-</div>
+  </div>
 </div>
 
 
 <!-- AUTH MODAL -->
 
-<div class="overlay" id="authOverlay">
+<div class="modal-bg" id="authModal">
 
-    <div class="auth-box">
+  <div class="modal">
 
-        <button class="close-auth" id="closeAuth">×</button>
+    <button class="close" id="closeAuth">×</button>
 
-        <h2 id="authTitle">Masuk ke RuangTulis</h2>
+    <h2 id="authTitle">Buat akun RuangTulis</h2>
 
-        <div class="auth-subtitle" id="authSubtitle">
-            Masuk untuk melanjutkan perjalanan menulismu.
-        </div>
+    <p class="modal-subtitle" id="authSubtitle">
+      Bergabung dan mulai bagikan tulisanmu.
+    </p>
 
-        <input
-            type="email"
-            id="email"
-            placeholder="Alamat email"
-        >
+    <div class="auth-tabs">
 
-        <input
-            type="password"
-            id="password"
-            placeholder="Password"
-        >
+      <button class="auth-tab active" data-method="email">
+        Email
+      </button>
 
-        <button class="auth-submit" id="authSubmit">
-            Masuk
-        </button>
+      <button class="auth-tab" data-method="sms">
+        Nomor HP
+      </button>
 
-        <div class="message" id="authMessage"></div>
-
-        <div class="switch-auth">
-            <span id="switchText">Belum punya akun?</span>
-
-            <button id="switchAuth">
-                Daftar
-            </button>
-        </div>
+      <button class="auth-tab" data-method="whatsapp">
+        WhatsApp
+      </button>
 
     </div>
+
+
+    <!-- PROFILE FIELDS -->
+
+    <div id="registerFields">
+
+      <div class="field">
+        <label>Nama lengkap</label>
+
+        <input
+          id="fullName"
+          type="text"
+          placeholder="Nama kamu"
+        >
+      </div>
+
+      <div class="field">
+        <label>Username</label>
+
+        <input
+          id="username"
+          type="text"
+          placeholder="contoh: namakamu"
+        >
+      </div>
+
+      <div class="field">
+        <label>Bio</label>
+
+        <textarea
+          id="bio"
+          placeholder="Ceritakan sedikit tentang dirimu..."
+        ></textarea>
+      </div>
+
+    </div>
+
+
+    <!-- EMAIL -->
+
+    <div id="emailFields">
+
+      <div class="field">
+        <label>Email</label>
+
+        <input
+          id="emailInput"
+          type="email"
+          placeholder="nama@email.com"
+        >
+      </div>
+
+      <div class="field">
+        <label>Password</label>
+
+        <input
+          id="passwordInput"
+          type="password"
+          placeholder="Minimal 6 karakter"
+        >
+
+        <div class="password-note">
+          Gunakan minimal 6 karakter.
+        </div>
+      </div>
+
+      <div class="field" id="confirmPasswordField">
+        <label>Konfirmasi password</label>
+
+        <input
+          id="confirmPasswordInput"
+          type="password"
+          placeholder="Ulangi password"
+        >
+      </div>
+
+    </div>
+
+
+    <!-- PHONE -->
+
+    <div id="phoneFields" class="hidden">
+
+      <div class="field">
+        <label>Nomor HP</label>
+
+        <input
+          id="phoneInput"
+          type="tel"
+          placeholder="+628123456789"
+        >
+
+        <div class="password-note">
+          Gunakan format internasional, contoh +628123456789.
+        </div>
+      </div>
+
+    </div>
+
+
+    <!-- OTP -->
+
+    <div id="otpFields" class="hidden">
+
+      <div class="field">
+        <label>Kode OTP</label>
+
+        <input
+          id="otpInput"
+          type="text"
+          inputmode="numeric"
+          maxlength="6"
+          placeholder="Masukkan 6 digit OTP"
+        >
+      </div>
+
+    </div>
+
+
+    <button class="primary" id="authSubmit">
+      Daftar
+    </button>
+
+    <button class="secondary hidden" id="verifyOtpButton">
+      Verifikasi OTP
+    </button>
+
+    <div class="message" id="authMessage"></div>
+
+    <div class="switch">
+
+      <span id="switchText">
+        Sudah punya akun?
+      </span>
+
+      <button id="switchMode">
+        Masuk
+      </button>
+
+    </div>
+
+  </div>
 
 </div>
 
 
 <script>
-/* ================================
-   SUPABASE
-================================ */
-const SUPABASE_URL = "https://jjqzaexmvutplxrcvnj.supabase.co";
-const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_mKKa9gZC8na1-mKbYXEBzA_5u67bip7";
-const supabaseClient =
+
+  /* =========================================================
+     SUPABASE
+  ========================================================= */
+
+  const SUPABASE_URL =
+    "https://jjqzaexmvutplxrcvnj.supabase.co";
+
+  const SUPABASE_PUBLISHABLE_KEY =
+    "sb_publishable_mKKa9gZC8na1-mKbYXEBzA_5u67bip7";
+
+  const supabaseClient =
     window.supabase.createClient(
-        SUPABASE_URL,
-        SUPABASE_PUBLISHABLE_KEY
+      SUPABASE_URL,
+      SUPABASE_PUBLISHABLE_KEY
     );
 
 
-/* ================================
-   ELEMENTS
-================================ */
+  /* =========================================================
+     STATE
+  ========================================================= */
 
-const overlay = document.getElementById("authOverlay");
-const openLogin = document.getElementById("openLogin");
-const closeAuth = document.getElementById("closeAuth");
-const authSubmit = document.getElementById("authSubmit");
-
-const emailInput = document.getElementById("email");
-const passwordInput = document.getElementById("password");
-
-const authTitle = document.getElementById("authTitle");
-const authSubtitle = document.getElementById("authSubtitle");
-
-const switchAuth = document.getElementById("switchAuth");
-const switchText = document.getElementById("switchText");
-
-const authMessage = document.getElementById("authMessage");
-
-const logoutBtn = document.getElementById("logoutBtn");
-const userMini = document.getElementById("userMini");
-const userName = document.getElementById("userName");
-const userAvatar = document.getElementById("userAvatar");
-
-const writeButton = document.getElementById("writeButton");
-const navWrite = document.getElementById("navWrite");
-const composerInput = document.getElementById("composerInput");
+  let registerMode = true;
+  let authMethod = "email";
+  let pendingPhone = "";
+  let pendingChannel = "sms";
+  let pendingProfile = {};
 
 
-let registerMode = false;
+  /* =========================================================
+     ELEMENTS
+  ========================================================= */
+
+  const authModal =
+    document.getElementById("authModal");
+
+  const authTitle =
+    document.getElementById("authTitle");
+
+  const authSubtitle =
+    document.getElementById("authSubtitle");
+
+  const authSubmit =
+    document.getElementById("authSubmit");
+
+  const authMessage =
+    document.getElementById("authMessage");
+
+  const switchMode =
+    document.getElementById("switchMode");
+
+  const switchText =
+    document.getElementById("switchText");
+
+  const emailFields =
+    document.getElementById("emailFields");
+
+  const phoneFields =
+    document.getElementById("phoneFields");
+
+  const otpFields =
+    document.getElementById("otpFields");
+
+  const registerFields =
+    document.getElementById("registerFields");
+
+  const confirmPasswordField =
+    document.getElementById("confirmPasswordField");
+
+  const verifyOtpButton =
+    document.getElementById("verifyOtpButton");
+
+  const headerUser =
+    document.getElementById("headerUser");
 
 
-/* ================================
-   AUTH MODAL
-================================ */
+  /* =========================================================
+     MESSAGE
+  ========================================================= */
 
-function openAuth() {
-    overlay.style.display = "flex";
-    emailInput.focus();
-}
-
-function closeAuthModal() {
-    overlay.style.display = "none";
-    authMessage.classList.remove("show");
-}
-
-openLogin.addEventListener("click", () => {
-    registerMode = false;
-    updateAuthMode();
-    openAuth();
-});
-
-closeAuth.addEventListener("click", closeAuthModal);
-
-overlay.addEventListener("click", (event) => {
-    if (event.target === overlay) {
-        closeAuthModal();
-    }
-});
-
-
-switchAuth.addEventListener("click", () => {
-    registerMode = !registerMode;
-    updateAuthMode();
-});
-
-
-function updateAuthMode() {
-
-    authMessage.classList.remove("show");
-
-    if (registerMode) {
-
-        authTitle.textContent = "Buat akun RuangTulis";
-
-        authSubtitle.textContent =
-            "Bergabung dan mulai bagikan tulisanmu.";
-
-        authSubmit.textContent = "Daftar";
-
-        switchText.textContent =
-            "Sudah punya akun?";
-
-        switchAuth.textContent =
-            "Masuk";
-
-    } else {
-
-        authTitle.textContent =
-            "Masuk ke RuangTulis";
-
-        authSubtitle.textContent =
-            "Masuk untuk melanjutkan perjalanan menulismu.";
-
-        authSubmit.textContent =
-            "Masuk";
-
-        switchText.textContent =
-            "Belum punya akun?";
-
-        switchAuth.textContent =
-            "Daftar";
-    }
-}
-
-
-/* ================================
-   MESSAGE
-================================ */
-
-function showMessage(text, error = false) {
+  function showMessage(text, error = false) {
 
     authMessage.textContent = text;
 
-    authMessage.style.background =
-        error ? "#fff0f0" : "#eef9f1";
+    authMessage.className =
+      "message show " +
+      (error ? "error" : "success");
+  }
 
-    authMessage.style.color =
-        error ? "#b33a3a" : "#287844";
+  function clearMessage() {
 
-    authMessage.classList.add("show");
-}
+    authMessage.textContent = "";
+
+    authMessage.className =
+      "message";
+  }
 
 
-/* ================================
-   LOGIN / REGISTER
-================================ */
+  /* =========================================================
+     MODAL
+  ========================================================= */
 
-authSubmit.addEventListener("click", async () => {
+  function openAuth() {
 
-    const email = emailInput.value.trim();
-    const password = passwordInput.value;
+    authModal.classList.add("show");
+  }
 
-    if (!email || !password) {
-        showMessage(
-            "Email dan password harus diisi.",
-            true
-        );
-        return;
+  function closeAuth() {
+
+    authModal.classList.remove("show");
+    clearMessage();
+  }
+
+
+  document
+    .getElementById("openLogin")
+    .addEventListener("click", () => {
+
+      registerMode = false;
+
+      updateAuthUI();
+
+      openAuth();
+
+    });
+
+
+  document
+    .getElementById("closeAuth")
+    .addEventListener("click", closeAuth);
+
+
+  authModal.addEventListener("click", (event) => {
+
+    if (event.target === authModal) {
+      closeAuth();
     }
 
-    authSubmit.disabled = true;
-    authSubmit.textContent = "Memproses...";
+  });
+
+
+  /* =========================================================
+     AUTH UI
+  ========================================================= */
+
+  function updateAuthUI() {
+
+    clearMessage();
+
+    otpFields.classList.add("hidden");
+    verifyOtpButton.classList.add("hidden");
+
+    authSubmit.classList.remove("hidden");
+
+    if (authMethod === "email") {
+
+      emailFields.classList.remove("hidden");
+      phoneFields.classList.add("hidden");
+
+    } else {
+
+      emailFields.classList.add("hidden");
+      phoneFields.classList.remove("hidden");
+
+    }
+
 
     if (registerMode) {
 
-        const { data, error } =
-            await supabaseClient.auth.signUp({
-                email: email,
-                password: password
-            });
+      authTitle.textContent =
+        "Buat akun RuangTulis";
 
-        if (error) {
+      authSubtitle.textContent =
+        "Bergabung dan mulai bagikan tulisanmu.";
 
-            showMessage(error.message, true);
+      registerFields.classList.remove("hidden");
 
-        } else {
+      authSubmit.textContent =
+        authMethod === "email"
+          ? "Daftar"
+          : "Kirim OTP";
+
+      switchText.textContent =
+        "Sudah punya akun?";
+
+      switchMode.textContent =
+        "Masuk";
+
+    } else {
+
+      authTitle.textContent =
+        "Masuk ke RuangTulis";
+
+      authSubtitle.textContent =
+        "Masuk dan lanjutkan perjalanan menulismu.";
+
+      registerFields.classList.add("hidden");
+
+      if (authMethod === "email") {
+
+        authSubmit.textContent = "Masuk";
+
+      } else {
+
+        authSubmit.textContent = "Kirim OTP";
+
+      }
+
+      switchText.textContent =
+        "Belum punya akun?";
+
+      switchMode.textContent =
+        "Daftar";
+    }
+  }
+
+
+  /* =========================================================
+     METHOD TABS
+  ========================================================= */
+
+  document
+    .querySelectorAll(".auth-tab")
+    .forEach(tab => {
+
+      tab.addEventListener("click", () => {
+
+        document
+          .querySelectorAll(".auth-tab")
+          .forEach(item => {
+            item.classList.remove("active");
+          });
+
+        tab.classList.add("active");
+
+        authMethod =
+          tab.dataset.method;
+
+        updateAuthUI();
+
+      });
+
+    });
+
+
+  /* =========================================================
+     SWITCH LOGIN / REGISTER
+  ========================================================= */
+
+  switchMode.addEventListener("click", () => {
+
+    registerMode = !registerMode;
+
+    updateAuthUI();
+
+  });
+
+
+  /* =========================================================
+     PHONE NORMALIZER
+  ========================================================= */
+
+  function normalizePhone(phone) {
+
+    let value =
+      phone.trim().replace(/\s+/g, "");
+
+    if (value.startsWith("08")) {
+
+      value =
+        "+62" + value.substring(1);
+
+    }
+
+    return value;
+  }
+
+
+  /* =========================================================
+     PROFILE DATA
+  ========================================================= */
+
+  function getProfileData() {
+
+    return {
+
+      full_name:
+        document
+          .getElementById("fullName")
+          .value
+          .trim(),
+
+      username:
+        document
+          .getElementById("username")
+          .value
+          .trim()
+          .toLowerCase()
+          .replace(/[^a-z0-9_]/g, ""),
+
+      bio:
+        document
+          .getElementById("bio")
+          .value
+          .trim()
+
+    };
+
+  }
+
+
+  function validateProfile(profile) {
+
+    if (!registerMode) {
+      return true;
+    }
+
+    if (!profile.full_name) {
+
+      showMessage(
+        "Nama lengkap harus diisi.",
+        true
+      );
+
+      return false;
+    }
+
+    if (!profile.username) {
+
+      showMessage(
+        "Username harus diisi.",
+        true
+      );
+
+      return false;
+    }
+
+    if (profile.username.length < 3) {
+
+      showMessage(
+        "Username minimal 3 karakter.",
+        true
+      );
+
+      return false;
+    }
+
+    return true;
+  }
+
+
+  /* =========================================================
+     MAIN AUTH BUTTON
+  ========================================================= */
+
+  authSubmit.addEventListener(
+    "click",
+    async () => {
+
+      clearMessage();
+
+      authSubmit.disabled = true;
+
+      try {
+
+        /* ================= EMAIL ================= */
+
+        if (authMethod === "email") {
+
+          const email =
+            document
+              .getElementById("emailInput")
+              .value
+              .trim();
+
+          const password =
+            document
+              .getElementById("passwordInput")
+              .value;
+
+          if (!email || !password) {
+
+            showMessage(
+              "Email dan password harus diisi.",
+              true
+            );
+
+            return;
+          }
+
+
+          /* REGISTER */
+
+          if (registerMode) {
+
+            const confirmPassword =
+              document
+                .getElementById("confirmPasswordInput")
+                .value;
+
+            if (password.length < 6) {
+
+              showMessage(
+                "Password minimal 6 karakter.",
+                true
+              );
+
+              return;
+            }
+
+            if (password !== confirmPassword) {
+
+              showMessage(
+                "Konfirmasi password tidak sama.",
+                true
+              );
+
+              return;
+            }
+
+
+            const profile =
+              getProfileData();
+
+            if (!validateProfile(profile)) {
+              return;
+            }
+
+
+            const {
+              data,
+              error
+            } =
+              await supabaseClient.auth.signUp({
+
+                email,
+
+                password,
+
+                options: {
+
+                  data: profile,
+
+                  emailRedirectTo:
+                    window.location.origin +
+                    window.location.pathname
+
+                }
+
+              });
+
+
+            if (error) {
+
+              showMessage(
+                error.message,
+                true
+              );
+
+              return;
+            }
+
 
             if (data.session) {
 
-                showMessage(
-                    "Akun berhasil dibuat! Kamu sudah masuk."
-                );
+              showMessage(
+                "Akun berhasil dibuat dan kamu sudah masuk."
+              );
 
-                closeAuthModal();
+              setTimeout(
+                closeAuth,
+                1000
+              );
 
             } else {
 
-                showMessage(
-                    "Akun berhasil dibuat. Silakan cek email untuk konfirmasi."
-                );
+              showMessage(
+                "Akun berhasil dibuat. Silakan cek email untuk konfirmasi."
+              );
+
             }
+
+            return;
+          }
+
+
+          /* LOGIN */
+
+          const {
+            error
+          } =
+            await supabaseClient.auth.signInWithPassword({
+
+              email,
+
+              password
+
+            });
+
+
+          if (error) {
+
+            showMessage(
+              error.message,
+              true
+            );
+
+            return;
+          }
+
+
+          showMessage(
+            "Berhasil masuk!"
+          );
+
+          setTimeout(
+            closeAuth,
+            700
+          );
+
         }
 
-    } else {
 
-        const { data, error } =
-            await supabaseClient.auth.signInWithPassword({
-                email: email,
-                password: password
+        /* ================= PHONE / WHATSAPP ================= */
+
+        else {
+
+          const phone =
+            normalizePhone(
+              document
+                .getElementById("phoneInput")
+                .value
+            );
+
+          if (!phone) {
+
+            showMessage(
+              "Nomor HP harus diisi.",
+              true
+            );
+
+            return;
+          }
+
+
+          pendingPhone = phone;
+
+          pendingChannel =
+            authMethod === "whatsapp"
+              ? "whatsapp"
+              : "sms";
+
+
+          /* REGISTER PROFILE */
+
+          if (registerMode) {
+
+            const profile =
+              getProfileData();
+
+            if (!validateProfile(profile)) {
+              return;
+            }
+
+            pendingProfile = profile;
+
+          }
+
+
+          const {
+            error
+          } =
+            await supabaseClient.auth.signInWithOtp({
+
+              phone,
+
+              options: {
+
+                channel:
+                  pendingChannel,
+
+                shouldCreateUser:
+                  true
+
+              }
+
             });
+
+
+          if (error) {
+
+            showMessage(
+              error.message,
+              true
+            );
+
+            return;
+          }
+
+
+          authSubmit.classList.add("hidden");
+
+          verifyOtpButton.classList.remove("hidden");
+
+          otpFields.classList.remove("hidden");
+
+          showMessage(
+            pendingChannel === "whatsapp"
+              ? "OTP sudah dikirim melalui WhatsApp."
+              : "OTP sudah dikirim melalui SMS."
+          );
+
+        }
+
+      } catch (error) {
+
+        console.error(error);
+
+        showMessage(
+          error.message ||
+          "Terjadi kesalahan.",
+          true
+        );
+
+      } finally {
+
+        authSubmit.disabled = false;
+
+      }
+
+    }
+  );
+
+
+  /* =========================================================
+     VERIFY PHONE OTP
+  ========================================================= */
+
+  verifyOtpButton.addEventListener(
+    "click",
+    async () => {
+
+      clearMessage();
+
+      const token =
+        document
+          .getElementById("otpInput")
+          .value
+          .trim();
+
+      if (!token) {
+
+        showMessage(
+          "Masukkan kode OTP.",
+          true
+        );
+
+        return;
+      }
+
+
+      verifyOtpButton.disabled = true;
+
+      try {
+
+        const {
+          data,
+          error
+        } =
+          await supabaseClient.auth.verifyOtp({
+
+            phone:
+              pendingPhone,
+
+            token,
+
+            type: "sms"
+
+          });
+
 
         if (error) {
 
-            showMessage(
-                "Email atau password salah.",
-                true
-            );
+          showMessage(
+            error.message,
+            true
+          );
 
-        } else {
-
-            showMessage(
-                "Berhasil masuk!"
-            );
-
-            setTimeout(() => {
-                closeAuthModal();
-            }, 700);
+          return;
         }
-    }
-
-    authSubmit.disabled = false;
-    authSubmit.textContent = registerMode ? "Daftar" : "Masuk";
-});
 
 
-/* ================================
-   UPDATE USER UI
-================================ */
+        /* SIMPAN DATA PROFIL */
 
-function updateUserUI(user) {
+        if (
+          registerMode &&
+          data.user &&
+          Object.keys(pendingProfile).length
+        ) {
 
-    if (user) {
+          const {
+            error: profileError
+          } =
+            await supabaseClient.auth.updateUser({
 
-        openLogin.style.display = "none";
-        logoutBtn.style.display = "block";
-        userMini.style.display = "flex";
+              data: pendingProfile
 
-        const email = user.email || "Pengguna";
-
-        userName.textContent =
-            email.split("@")[0];
-
-        userAvatar.textContent =
-            email.charAt(0).toUpperCase();
-
-    } else {
-
-        openLogin.style.display = "block";
-        logoutBtn.style.display = "none";
-        userMini.style.display = "none";
-    }
-}
+            });
 
 
-/* ================================
-   CHECK SESSION
-================================ */
+          if (profileError) {
 
-async function checkUser() {
+            showMessage(
+              "Akun berhasil dibuat, tetapi data profil belum tersimpan: " +
+              profileError.message,
+              true
+            );
 
-    const {
-        data: { user }
-    } = await supabaseClient.auth.getUser();
+            return;
+          }
 
-    updateUserUI(user);
-}
-
-checkUser();
+        }
 
 
-/* ================================
-   AUTH STATE
-================================ */
-
-supabaseClient.auth.onAuthStateChange(
-    (_event, session) => {
-
-        updateUserUI(
-            session ? session.user : null
+        showMessage(
+          "Akun berhasil dibuat. Selamat datang di RuangTulis!"
         );
+
+
+        setTimeout(
+          closeAuth,
+          1000
+        );
+
+
+      } catch (error) {
+
+        showMessage(
+          error.message ||
+          "Verifikasi OTP gagal.",
+          true
+        );
+
+      } finally {
+
+        verifyOtpButton.disabled = false;
+
+      }
+
     }
-);
+  );
 
 
-/* ================================
-   LOGOUT
-================================ */
+  /* =========================================================
+     AUTH STATE
+  ========================================================= */
 
-logoutBtn.addEventListener("click", async () => {
-
-    await supabaseClient.auth.signOut();
-
-    updateUserUI(null);
-});
-
-
-/* ================================
-   WRITE BUTTON
-================================ */
-
-function startWriting() {
-
-    composerInput.focus();
-
-    if (!composerInput.value) {
-        composerInput.placeholder =
-            "Tulis judul atau ide ceritamu...";
-    }
-}
-
-writeButton.addEventListener(
-    "click",
-    startWriting
-);
-
-navWrite.addEventListener(
-    "click",
-    startWriting
-);
-
-
-/* ================================
-   COMPOSER LOGIN CHECK
-================================ */
-
-composerInput.addEventListener("focus", async () => {
+  async function loadCurrentUser() {
 
     const {
-        data: { user }
-    } = await supabaseClient.auth.getUser();
+      data
+    } =
+      await supabaseClient.auth.getUser();
+
+    updateHeader(
+      data.user || null
+    );
+
+  }
+
+
+  function updateHeader(user) {
 
     if (!user) {
 
-        composerInput.blur();
+      headerUser.innerHTML = `
+        <button class="login-btn" id="openLogin">
+          Masuk
+        </button>
+      `;
 
-        registerMode = false;
-        updateAuthMode();
-        openAuth();
+      document
+        .getElementById("openLogin")
+        .addEventListener(
+          "click",
+          () => {
+
+            registerMode = false;
+
+            updateAuthUI();
+
+            openAuth();
+
+          }
+        );
+
+      return;
     }
-});
 
 
-/* ================================
-   SEARCH DEMO
-================================ */
+    const metadata =
+      user.user_metadata || {};
 
-document
-    .getElementById("searchInput")
-    .addEventListener("keydown", (event) => {
+    const name =
+      metadata.full_name ||
+      user.email ||
+      user.phone ||
+      "Pengguna";
 
-        if (event.key === "Enter") {
+    const firstLetter =
+      name
+        .charAt(0)
+        .toUpperCase();
 
-            const value =
-                event.target.value.trim();
 
-            if (value) {
-                alert(
-                    'Pencarian "' +
-                    value +
-                    '" akan kita aktifkan pada tahap berikutnya.'
-                );
-            }
+    headerUser.innerHTML = `
+
+      <div class="avatar">
+        ${firstLetter}
+      </div>
+
+      <div>
+        <strong>${escapeHtml(name)}</strong>
+      </div>
+
+      <button
+        class="logout-btn"
+        id="logoutButton"
+      >
+        Keluar
+      </button>
+
+    `;
+
+
+    document
+      .getElementById("logoutButton")
+      .addEventListener(
+        "click",
+        async () => {
+
+          await supabaseClient.auth.signOut();
+
+          updateHeader(null);
+
         }
-    });
+      );
+
+  }
+
+
+  function escapeHtml(value) {
+
+    return String(value)
+      .replaceAll("&", "&amp;")
+      .replaceAll("<", "&lt;")
+      .replaceAll(">", "&gt;")
+      .replaceAll('"', "&quot;")
+      .replaceAll("'", "&#039;");
+
+  }
+
+
+  supabaseClient.auth.onAuthStateChange(
+    (_event, session) => {
+
+      updateHeader(
+        session?.user || null
+      );
+
+    }
+  );
+
+
+  /* =========================================================
+     WRITE BUTTON
+  ========================================================= */
+
+  document
+    .getElementById("writeButton")
+    .addEventListener(
+      "click",
+      async () => {
+
+        const {
+          data
+        } =
+          await supabaseClient.auth.getUser();
+
+        if (!data.user) {
+
+          registerMode = false;
+
+          updateAuthUI();
+
+          openAuth();
+
+          return;
+        }
+
+
+        const text =
+          document
+            .getElementById("composerText")
+            .value
+            .trim();
+
+        if (!text) {
+
+          alert(
+            "Tulis sesuatu terlebih dahulu."
+          );
+
+          return;
+        }
+
+
+        alert(
+          "Fitur penyimpanan tulisan akan kita sambungkan ke database setelah sistem akun selesai."
+        );
+
+      }
+    );
+
+
+  /* =========================================================
+     INITIALIZE
+  ========================================================= */
+
+  updateAuthUI();
+
+  loadCurrentUser();
 
 </script>
 
